@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿using System;
+using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 [CustomPropertyDrawer(typeof(FriendlyArrayAttribute))]
@@ -9,11 +11,20 @@ public class FriendlyArrayDrawer : PropertyDrawer
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
+
         //EditorGUI.LabelField(position, label);
-        
-        if(property.isArray)
+
+        object targetObject = property.serializedObject.targetObject;
+        Type parentType = targetObject.GetType();
+        System.Reflection.FieldInfo fi = parentType.GetField(property.propertyPath);
+
+        if(TypeUtils.IsSubclassOfRawGeneric(typeof(List<>), fi.FieldType))
         {
             Debug.Log("is array");
+            // List<> list = (List)fi.GetValue(targetObject);
+            // Debug.Log(list);
+            // Debug.Log("here");
+            Debug.Log(property.arraySize);
         }
         else
         {
